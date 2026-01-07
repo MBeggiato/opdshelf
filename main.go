@@ -15,14 +15,22 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const (
-	PORT      = "3000"
-	HOST      = "0.0.0.0"
-	BOOKS_DIR = "./books"
-	REVERSE_PROXY = false
-	REVERSE_PROXY_HOST = "0.0.0.0"
-	REVERSE_PROXY_PORT = "80"
+var (
+	PORT               = getEnv("PORT", "3000")
+	HOST               = getEnv("HOST", "0.0.0.0")
+	BOOKS_DIR          = getEnv("BOOKS_DIR", "./books")
+	REVERSE_PROXY      = strings.ToLower(getEnv("REVERSE_PROXY", "false")) == "true"
+	REVERSE_PROXY_HOST = getEnv("REVERSE_PROXY_HOST", "0.0.0.0")
+	REVERSE_PROXY_PORT = getEnv("REVERSE_PROXY_PORT", "80")
 )
+
+// Helper function to read environment variables with a fallback
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
+}
 
 // BookInfo represents metadata about a book
 type BookInfo struct {
