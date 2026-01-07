@@ -13,16 +13,31 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 var (
-	PORT               = getEnv("PORT", "3000")
-	HOST               = getEnv("HOST", "0.0.0.0")
-	BOOKS_DIR          = getEnv("BOOKS_DIR", "./books")
-	REVERSE_PROXY      = strings.ToLower(getEnv("REVERSE_PROXY", "false")) == "true"
+	PORT               string
+	HOST               string
+	BOOKS_DIR          string
+	REVERSE_PROXY      bool
+	REVERSE_PROXY_HOST string
+	REVERSE_PROXY_PORT string
+)
+
+func init() {
+	// Load .env file if it exists
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found")
+	}
+
+	PORT = getEnv("PORT", "3000")
+	HOST = getEnv("HOST", "0.0.0.0")
+	BOOKS_DIR = getEnv("BOOKS_DIR", "./books")
+	REVERSE_PROXY = strings.ToLower(getEnv("REVERSE_PROXY", "false")) == "true"
 	REVERSE_PROXY_HOST = getEnv("REVERSE_PROXY_HOST", "0.0.0.0")
 	REVERSE_PROXY_PORT = getEnv("REVERSE_PROXY_PORT", "80")
-)
+}
 
 // Helper function to read environment variables with a fallback
 func getEnv(key, fallback string) string {
