@@ -2,7 +2,7 @@ name: resilient_erik
 services:
   opds-server:
     build:
-      context: /tmp/casaos-compose-app-3364774096
+      context: .
       dockerfile: Dockerfile
     cpu_shares: 90
     command: []
