@@ -11,6 +11,7 @@
 * Download books from your browser or any OPDS-compatible reader
 * Delete books from the admin panel
 * OPDS 1.x feed for easy integration with e-readers
+* Recursive directory scanning for organizing books in subfolders
 
 ### Fast and lightweight
 * Minimal dependencies
@@ -65,7 +66,6 @@ services:
     environment:
       - PORT=3000
       - HOST=0.0.0.0
-      - BOOKS_DIR=/app/books
 ```
 
 Then run:
@@ -191,7 +191,7 @@ Set the `PORT`, `HOST`, or `BOOKS_DIR` environment variables before starting the
 Requirements: [Go](https://go.dev/dl/) >= v1.23
 
 ```bash
-go build -o opds-server .
+go build -o opds-server ./cmd/server
 ```
 
 <br>
