@@ -6,17 +6,17 @@ WORKDIR /app
 # Install dependencies
 RUN apk add --no-cache git
 
-# Initialize Go module if not exists
-RUN go mod init opdslibrary
+# Copy go module files
+COPY go.mod go.sum ./
 
-# Add module dependencies
-RUN go get github.com/gorilla/mux@v1.8.1
+# Download dependencies
+RUN go mod download
 
 # Copy source code
 COPY . .
 
 # Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -o opds-server .
+RUN CGO_ENABLED=0 GOOS=linux go build -o opds-server ./cmd/server
 
 # Use a smaller image for the final container
 FROM alpine:latest
