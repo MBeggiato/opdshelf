@@ -43,6 +43,25 @@ func CleanupTitle(filename string) string {
 func GetBooksList(booksDir string) ([]models.BookInfo, error) {
 	var books []models.BookInfo
 
+	// Supported extensions
+	var validExt = map[string]struct{}{
+		".epub": {},
+		".pdf":  {},
+		".fb2":  {},
+		".mobi": {},
+		".azw":  {},
+		".azw3": {},
+		".azw4": {},
+		".txt":  {},
+		".rtf":  {},
+		".html": {},
+		".htm":  {},
+		".djvu": {},
+		".cbz":  {},
+		".cbr":  {},
+		".cb7":  {},
+	}
+
 	err := filepath.WalkDir(booksDir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			log.Printf("Error accessing path %q: %v", path, err)
@@ -59,7 +78,12 @@ func GetBooksList(booksDir string) ([]models.BookInfo, error) {
 			return nil
 		}
 
-		mimeType := mime.TypeByExtension(filepath.Ext(d.Name()))
+		ext := strings.ToLower(filepath.Ext(path))
+		if _, ok := validExt[ext]; !ok {
+			return nil
+		}
+
+		mimeType := mime.TypeByExtension(ext)
 		if mimeType == "" {
 			mimeType = "application/octet-stream"
 		}
