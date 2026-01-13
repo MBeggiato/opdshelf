@@ -1,11 +1,18 @@
-<p align="center"><em>What if you could host your own OPDS library server in seconds?</em></p>
+<p align="center">
+  <img src="static/logo.png" alt="OPDShelf Logo" width="200">
+</p>
 <h1 align="center">OPDShelf</h1>
-<p align="center"><a href="#installation">Install</a> • <a href="#configuration">Configuration</a>
+<p align="center"><em>Host your own OPDS library server in seconds</em></p>
+<p align="center">
+  <a href="#installation">Install</a> •
+  <a href="#configuration">Configuration</a> •
+  <a href="#features">Features</a> •
+  <a href="#faq">FAQ</a>
+</p>
 
 ![](static/screenshot.png)
 
 ## Features
-
 ### Simple book hosting
 * Upload EPUB and PDF files via web UI
 * Download books from your browser or any OPDS-compatible reader
