@@ -36,6 +36,21 @@
 📱 **OPDS Compatible**
 - Works with any OPDS reader (Moon+ Reader, KOReader, Calibre, etc.)
 - OPDS 1.x feed
+- **Dynamic Sorting**: Order your feed by name or date via URL parameters
+
+---
+
+## Usage
+
+### Sorting
+Both the Admin UI and the OPDS feed support sorting. In the OPDS feed, use the `sort` query parameter:
+
+- **Name (A-Z)**: `?sort=name-asc`
+- **Name (Z-A)**: `?sort=name-desc`
+- **Newest First** (Default): `?sort=date-desc`
+- **Oldest First**: `?sort=date-asc`
+
+Example: `http://localhost:3000/?sort=name-asc`
 
 ---
 

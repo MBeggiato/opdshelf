@@ -29,15 +29,6 @@ func main() {
 	mime.AddExtensionType(".fb2", "application/x-fictionbook+xml")
 	mime.AddExtensionType(".fb2.zip", "application/zip")
 
-	// Register template functions globally if needed, though handlers handle their own templates.
-	// However, we might want to ensure they are consistent.
-	// The original main.go did:
-	// templates := template.New("")
-	// templates.Funcs(...)
-	// But it didn't use this variable 'templates' anywhere except to show it can be done?
-	// Actually, the specific handlers (opdsIndexHandler, adminHandler) created their own templates.
-	// So we don't need a global template instance here.
-
 	// Helper for checking template functions availability (optional)
 	_ = template.FuncMap{
 		"formatSize": utils.FormatSize,

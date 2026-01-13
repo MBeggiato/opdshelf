@@ -92,6 +92,7 @@ func (h *Handler) OpdsIndexHandler(w http.ResponseWriter, r *http.Request) {
 		Books:       books,
 		BaseURL:     h.GetBaseURL(r),
 		CurrentTime: time.Now().UTC().Format(time.RFC3339),
+		SortMode:    sortMode,
 	}
 
 	// Set content type for OPDS
@@ -129,8 +130,9 @@ func (h *Handler) AdminHandler(w http.ResponseWriter, r *http.Request) {
 	utils.SortBooks(books, sortMode)
 
 	data := models.TemplateData{
-		Books:   books,
-		BaseURL: h.GetBaseURL(r),
+		Books:    books,
+		BaseURL:  h.GetBaseURL(r),
+		SortMode: sortMode,
 	}
 
 	// Parse templates with function map

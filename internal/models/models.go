@@ -16,4 +16,5 @@ type TemplateData struct {
 	Books       []BookInfo
 	BaseURL     string
 	CurrentTime string
+	SortMode    string
 }

@@ -47,10 +47,11 @@
         <div class="relative">
           <select id="bookSort"
             class="w-full sm:w-48 pl-10 pr-8 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer">
-            <option value="name-asc">Name (A-Z)</option>
-            <option value="name-desc">Name (Z-A)</option>
-            <option value="date-desc" selected>Newest First</option>
-            <option value="date-asc">Oldest First</option>
+            <option value="name-asc" {{if eq .SortMode "name-asc" }}selected{{end}}>Name (A-Z)</option>
+            <option value="name-desc" {{if eq .SortMode "name-desc" }}selected{{end}}>Name (Z-A)</option>
+            <option value="date-desc" {{if or (eq .SortMode "date-desc" ) (eq .SortMode "" )}}selected{{end}}>Newest
+              First</option>
+            <option value="date-asc" {{if eq .SortMode "date-asc" }}selected{{end}}>Oldest First</option>
           </select>
           <i class="fas fa-sort-amount-down absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
           <i
@@ -128,14 +129,16 @@
       </div>
       <div>
         <h3 class="font-medium text-slate-900 dark:text-white">OPDS Feed URL</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400">Add this to your reader app</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Add this to your reader app. Support sorting with
+          <code>?sort=name-asc|date-desc</code>
+        </p>
       </div>
     </div>
     <div
       class="flex items-center w-full sm:w-auto bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 shadow-sm">
-      <code
+      <code id="opdsUrlDisplay"
         class="text-sm text-slate-600 dark:text-slate-300 font-mono flex-grow px-2 truncate selection:bg-primary-100">{{.BaseURL}}</code>
-      <button onclick="navigator.clipboard.writeText('{{.BaseURL}}')"
+      <button id="opdsCopyBtn" data-base-url="{{.BaseURL}}"
         class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-400 hover:text-primary-600 transition-colors"
         title="Copy URL">
         <i class="far fa-copy"></i>
@@ -353,12 +356,44 @@
     }
   }
 
+  const opdsUrlDisplay = document.getElementById('opdsUrlDisplay');
+  const opdsCopyBtn = document.getElementById('opdsCopyBtn');
+
+  function updateOpdsUrl() {
+    if (!opdsUrlDisplay || !opdsCopyBtn || !sortSelect) return;
+    const baseUrl = opdsCopyBtn.dataset.baseUrl;
+    const sortMode = sortSelect.value;
+    const fullUrl = `${baseUrl}/?sort=${sortMode}`;
+    opdsUrlDisplay.textContent = fullUrl;
+  }
+
+  if (opdsCopyBtn) {
+    opdsCopyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(opdsUrlDisplay.textContent);
+      const icon = opdsCopyBtn.querySelector('i');
+      icon.classList.replace('far', 'fas');
+      icon.classList.replace('fa-copy', 'fa-check');
+      setTimeout(() => {
+        icon.classList.replace('fas', 'far');
+        icon.classList.replace('fa-check', 'fa-copy');
+      }, 2000);
+    });
+  }
+
   if (searchInput && sortSelect && booksGrid) {
     searchInput.addEventListener('input', filterAndSortBooks);
-    sortSelect.addEventListener('change', filterAndSortBooks);
+    sortSelect.addEventListener('change', () => {
+      filterAndSortBooks();
+      updateOpdsUrl();
+      // Update URL without reloading to persist sort choice on refresh
+      const url = new URL(window.location);
+      url.searchParams.set('sort', sortSelect.value);
+      window.history.pushState({}, '', url);
+    });
 
-    // Initial sort
+    // Initial sort and URL setup
     filterAndSortBooks();
+    updateOpdsUrl();
   }
 </script>
 {{end}}
