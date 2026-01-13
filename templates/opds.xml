@@ -17,6 +17,8 @@
               href="{{$.BaseURL}}/books/{{.Filename}}"
               type="{{.MimeType}}"
               length="{{.Size}}"/>
+        <link rel="http://opds-spec.org/image" href="{{$.BaseURL}}/cover/{{.Filename}}" type="image/jpeg" />
+        <link rel="http://opds-spec.org/image/thumbnail" href="{{$.BaseURL}}/cover/{{.Filename}}" type="image/jpeg" />
     </entry>
     {{end}}
 </feed>

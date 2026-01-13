@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"opds-server/internal/config"
+	"opds-server/internal/cover"
 	"opds-server/internal/models"
 	"opds-server/internal/utils"
 	"os"
@@ -207,4 +208,32 @@ func (h *Handler) GetBaseURL(r *http.Request) string {
 	} else {
 		return fmt.Sprintf("%s://%s:%s", scheme, h.Config.ReverseProxyHost, h.Config.ReverseProxyPort)
 	}
+}
+
+// CoverHandler handles the cover image request
+func (h *Handler) CoverHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	filename := vars["filename"]
+
+	// Sanitize filename for safety
+	cleanFilename := filepath.Clean(filename)
+	filePath := filepath.Join(h.Config.BooksDir, cleanFilename)
+
+	// Check if file exists
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+
+	coverData, mimeType, err := cover.GetCover(filePath)
+	if err != nil {
+		// Log error but return 404 or default image so client can handle it
+		log.Printf("Error extracting cover for %s: %v", filename, err)
+		http.Error(w, "Cover not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", mimeType)
+	w.Header().Set("Cache-Control", "public, max-age=86400") // Cache for 1 day
+	w.Write(coverData)
 }

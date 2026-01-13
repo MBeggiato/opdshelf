@@ -59,6 +59,7 @@ func main() {
 	r.HandleFunc("/upload", h.UploadHandler).Methods("POST")
 	r.HandleFunc("/delete/{filename}", h.DeleteHandler).Methods("POST")
 	r.HandleFunc("/simple", h.SimpleHandler).Methods("GET")
+	r.HandleFunc("/cover/{filename}", h.CoverHandler).Methods("GET")
 
 	// Serve books directory
 	r.PathPrefix("/books/").Handler(http.StripPrefix("/books/", http.FileServer(http.Dir(cfg.BooksDir))))
