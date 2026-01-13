@@ -165,7 +165,7 @@
     </form>
   </div>
 </div>
-<script>
+<script data-total-books="{{len .Books}}">
   document.addEventListener("DOMContentLoaded", () => {
     const dropZone = document.getElementById("dropZone");
     const fileInput = document.getElementById("book");
@@ -290,7 +290,7 @@
   const searchInput = document.getElementById('bookSearch');
   const booksGrid = document.getElementById('booksGrid');
   const booksCount = document.getElementById('booksCount');
-  const totalBooks = {{ len .Books }};
+  const totalBooks = parseInt(document.currentScript.dataset.totalBooks, 10) || 0;
 
   if (searchInput && booksGrid) {
     searchInput.addEventListener('input', (e) => {
