@@ -85,6 +85,9 @@ func (h *Handler) OpdsIndexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	sortMode := r.URL.Query().Get("sort")
+	utils.SortBooks(books, sortMode)
+
 	data := models.TemplateData{
 		Books:       books,
 		BaseURL:     h.GetBaseURL(r),
@@ -118,6 +121,12 @@ func (h *Handler) AdminHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to read books directory", http.StatusInternalServerError)
 		return
 	}
+
+	sortMode := r.URL.Query().Get("sort")
+	if sortMode == "" {
+		sortMode = "date-desc" // Default for admin
+	}
+	utils.SortBooks(books, sortMode)
 
 	data := models.TemplateData{
 		Books:   books,

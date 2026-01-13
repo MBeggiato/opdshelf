@@ -7,6 +7,7 @@ import (
 	"opds-server/internal/models"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 )
@@ -40,6 +41,33 @@ func CleanupTitle(filename string) string {
 }
 
 // GetBooksList gets list of books from the specified directory recursively
+// SortBooks sorts a slice of BookInfo based on the provided mode
+func SortBooks(books []models.BookInfo, mode string) {
+	switch mode {
+	case "name-asc":
+		sort.Slice(books, func(i, j int) bool {
+			return strings.ToLower(books[i].Title) < strings.ToLower(books[j].Title)
+		})
+	case "name-desc":
+		sort.Slice(books, func(i, j int) bool {
+			return strings.ToLower(books[i].Title) > strings.ToLower(books[j].Title)
+		})
+	case "date-asc":
+		sort.Slice(books, func(i, j int) bool {
+			return books[i].LastUpdated.Before(books[j].LastUpdated)
+		})
+	case "date-desc":
+		sort.Slice(books, func(i, j int) bool {
+			return books[i].LastUpdated.After(books[j].LastUpdated)
+		})
+	default:
+		// Default to date-desc (newest first)
+		sort.Slice(books, func(i, j int) bool {
+			return books[i].LastUpdated.After(books[j].LastUpdated)
+		})
+	}
+}
+
 func GetBooksList(booksDir string) ([]models.BookInfo, error) {
 	var books []models.BookInfo
 

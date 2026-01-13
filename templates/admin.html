@@ -38,17 +38,31 @@
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
       <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Library Collection <span id="booksCount"
           class="text-sm font-normal text-slate-500 ml-2">({{len .Books}} books)</span></h2>
-      <div class="relative w-full sm:w-80">
-        <input type="text" id="bookSearch" placeholder="Search books..."
-          class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all">
-        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+      <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+        <div class="relative flex-grow sm:w-64">
+          <input type="text" id="bookSearch" placeholder="Search books..."
+            class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all">
+          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+        </div>
+        <div class="relative">
+          <select id="bookSort"
+            class="w-full sm:w-48 pl-10 pr-8 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer">
+            <option value="name-asc">Name (A-Z)</option>
+            <option value="name-desc">Name (Z-A)</option>
+            <option value="date-desc" selected>Newest First</option>
+            <option value="date-asc">Oldest First</option>
+          </select>
+          <i class="fas fa-sort-amount-down absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <i
+            class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+        </div>
       </div>
     </div>
 
     {{if .Books}}
     <div id="booksGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
       {{range .Books}}
-      <div data-title="{{.Title}}"
+      <div data-title="{{.Title}}" data-added="{{.LastUpdated.Unix}}"
         class="book-card group relative theme-card overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
         <!-- Cover Image -->
         <div class="aspect-[2/3] relative overflow-hidden bg-slate-100 dark:bg-slate-800">
@@ -286,37 +300,65 @@
     }
   });
 
-  // Search functionality
+  // Search and Sort functionality
   const searchInput = document.getElementById('bookSearch');
+  const sortSelect = document.getElementById('bookSort');
   const booksGrid = document.getElementById('booksGrid');
   const booksCount = document.getElementById('booksCount');
   const totalBooks = parseInt(document.currentScript.dataset.totalBooks, 10) || 0;
 
-  if (searchInput && booksGrid) {
-    searchInput.addEventListener('input', (e) => {
-      const query = e.target.value.toLowerCase().trim();
-      const bookCards = booksGrid.querySelectorAll('.book-card');
-      let visibleCount = 0;
+  function filterAndSortBooks() {
+    if (!booksGrid) return;
 
-      bookCards.forEach(card => {
-        const title = (card.dataset.title || '').toLowerCase();
-        if (title.includes(query)) {
-          card.style.display = '';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
-        }
-      });
+    const query = searchInput.value.toLowerCase().trim();
+    const sortMode = sortSelect.value;
+    const bookCards = Array.from(booksGrid.querySelectorAll('.book-card'));
+    let visibleCount = 0;
 
-      // Update count
-      if (booksCount) {
-        if (query) {
-          booksCount.textContent = `(${visibleCount} of ${totalBooks} books)`;
-        } else {
-          booksCount.textContent = `(${totalBooks} books)`;
-        }
+    // Filter
+    bookCards.forEach(card => {
+      const title = (card.dataset.title || '').toLowerCase();
+      if (title.includes(query)) {
+        card.style.display = '';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
       }
     });
+
+    // Sort
+    bookCards.sort((a, b) => {
+      if (sortMode === 'name-asc') {
+        return a.dataset.title.localeCompare(b.dataset.title);
+      } else if (sortMode === 'name-desc') {
+        return b.dataset.title.localeCompare(a.dataset.title);
+      } else if (sortMode === 'date-desc') {
+        return parseInt(b.dataset.added) - parseInt(a.dataset.added);
+      } else if (sortMode === 'date-asc') {
+        return parseInt(a.dataset.added) - parseInt(b.dataset.added);
+      }
+      return 0;
+    });
+
+    // Reorder DOM
+    bookCards.forEach(card => booksGrid.appendChild(card));
+
+    // Update count
+    if (booksCount) {
+      if (query) {
+        booksCount.textContent = `(${visibleCount} of ${totalBooks} books)`;
+      } else {
+        booksCount.textContent = `(${totalBooks} books)`;
+      }
+    }
+  }
+
+  if (searchInput && sortSelect && booksGrid) {
+    searchInput.addEventListener('input', filterAndSortBooks);
+    sortSelect.addEventListener('change', filterAndSortBooks);
+
+    // Initial sort
+    filterAndSortBooks();
   }
 </script>
 {{end}}
