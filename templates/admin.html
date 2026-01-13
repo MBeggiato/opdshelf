@@ -35,19 +35,21 @@
 
   <!-- Book Collection -->
   <div>
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Library Collection <span
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+      <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Library Collection <span id="booksCount"
           class="text-sm font-normal text-slate-500 ml-2">({{len .Books}} books)</span></h2>
-      <div class="flex space-x-2">
-        <!-- Future filters could go here -->
+      <div class="relative w-full sm:w-80">
+        <input type="text" id="bookSearch" placeholder="Search books..."
+          class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all">
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
       </div>
     </div>
 
     {{if .Books}}
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+    <div id="booksGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
       {{range .Books}}
-      <div
-        class="group relative theme-card overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+      <div data-title="{{.Title}}"
+        class="book-card group relative theme-card overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
         <!-- Cover Image -->
         <div class="aspect-[2/3] relative overflow-hidden bg-slate-100 dark:bg-slate-800">
           <img src="/cover/{{.Filename}}"
@@ -283,5 +285,38 @@
       closeRenameModal();
     }
   });
+
+  // Search functionality
+  const searchInput = document.getElementById('bookSearch');
+  const booksGrid = document.getElementById('booksGrid');
+  const booksCount = document.getElementById('booksCount');
+  const totalBooks = {{ len .Books }};
+
+  if (searchInput && booksGrid) {
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      const bookCards = booksGrid.querySelectorAll('.book-card');
+      let visibleCount = 0;
+
+      bookCards.forEach(card => {
+        const title = (card.dataset.title || '').toLowerCase();
+        if (title.includes(query)) {
+          card.style.display = '';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Update count
+      if (booksCount) {
+        if (query) {
+          booksCount.textContent = `(${visibleCount} of ${totalBooks} books)`;
+        } else {
+          booksCount.textContent = `(${totalBooks} books)`;
+        }
+      }
+    });
+  }
 </script>
 {{end}}
