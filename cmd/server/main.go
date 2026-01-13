@@ -57,9 +57,9 @@ func main() {
 	r.HandleFunc("/", h.OpdsIndexHandler).Methods("GET")
 	r.HandleFunc("/admin", h.AdminHandler).Methods("GET")
 	r.HandleFunc("/upload", h.UploadHandler).Methods("POST")
-	r.HandleFunc("/delete/{filename}", h.DeleteHandler).Methods("POST")
+	r.HandleFunc("/delete/{filename:.+}", h.DeleteHandler).Methods("POST")
 	r.HandleFunc("/simple", h.SimpleHandler).Methods("GET")
-	r.HandleFunc("/cover/{filename}", h.CoverHandler).Methods("GET")
+	r.HandleFunc("/cover/{filename:.+}", h.CoverHandler).Methods("GET")
 	r.HandleFunc("/rename", h.RenameHandler).Methods("POST")
 
 	// Serve books directory
