@@ -12,6 +12,7 @@ import (
 	"opds-server/internal/utils"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -31,6 +32,48 @@ var templateFuncs = template.FuncMap{
 	"formatSize": utils.FormatSize,
 	"even": func(i int) bool {
 		return i%2 == 0
+	},
+	"simpleMime": func(mimeType string) string {
+		switch mimeType {
+		case "application/epub+zip":
+			return "EPUB"
+		case "application/pdf":
+			return "PDF"
+		case "application/x-fictionbook+xml", "application/x-zip-compressed-fb2":
+			return "FB2"
+		case "application/zip", "application/x-zip-compressed":
+			return "ZIP"
+		case "application/x-cbz", "application/vnd.comicbook+zip":
+			return "CBZ"
+		case "application/x-cbr":
+			return "CBR"
+		case "application/x-mobi", "application/x-mobipocket-ebook":
+			return "MOBI"
+		case "application/vnd.amazon.ebook":
+			return "AZW"
+		case "image/vnd.djvu":
+			return "DJVU"
+		case "text/plain":
+			return "TXT"
+		case "text/rtf", "application/rtf":
+			return "RTF"
+		case "text/html":
+			return "HTML"
+		default:
+			// Improved heuristic: Check if it contains specific keywords
+			lower := strings.ToLower(mimeType)
+			if strings.Contains(lower, "azw") {
+				return "AZW"
+			}
+			if strings.Contains(lower, "djvu") {
+				return "DJVU"
+			}
+			// Fallback: truncated
+			if len(mimeType) > 12 {
+				return mimeType[:10] + "..."
+			}
+			return mimeType
+		}
 	},
 }
 
@@ -236,4 +279,55 @@ func (h *Handler) CoverHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", mimeType)
 	w.Header().Set("Cache-Control", "public, max-age=86400") // Cache for 1 day
 	w.Write(coverData)
+}
+
+// RenameHandler handles file renaming
+func (h *Handler) RenameHandler(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		return
+	}
+
+	oldFilename := r.FormValue("oldFilename")
+	newFilename := r.FormValue("newFilename")
+
+	if oldFilename == "" || newFilename == "" {
+		http.Error(w, "Missing filenames", http.StatusBadRequest)
+		return
+	}
+
+	// Clean paths to prevent traversal
+	cleanOld := filepath.Clean(oldFilename)
+	cleanNew := filepath.Clean(newFilename)
+
+	// Preserve extension if user forgot it
+	if filepath.Ext(cleanNew) == "" {
+		cleanNew += filepath.Ext(cleanOld)
+	}
+
+	oldPath := filepath.Join(h.Config.BooksDir, cleanOld)
+	// Use the same directory as the old file
+	newPath := filepath.Join(filepath.Dir(oldPath), cleanNew)
+
+	// Check if old file exists
+	if _, err := os.Stat(oldPath); os.IsNotExist(err) {
+		http.Error(w, "Original file not found", http.StatusNotFound)
+		return
+	}
+
+	// Check if new file already exists to prevent overwrite
+	if _, err := os.Stat(newPath); err == nil {
+		http.Error(w, "Destination file already exists", http.StatusConflict)
+		return
+	}
+
+	log.Printf("Renaming %s to %s", oldPath, newPath)
+	if err := os.Rename(oldPath, newPath); err != nil {
+		log.Printf("Error renaming file: %v", err)
+		http.Error(w, "Error renaming file", http.StatusInternalServerError)
+		return
+	}
+
+	// Redirect back to admin
+	http.Redirect(w, r, "/admin", http.StatusSeeOther)
 }

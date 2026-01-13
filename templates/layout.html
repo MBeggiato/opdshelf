@@ -1,230 +1,222 @@
 {{define "layout.html"}}
 <!DOCTYPE html>
 <html lang="es" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OPDShelf</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style type="text/tailwindcss">
-      :root {
-        --primary: #2563eb;
-        --secondary: #64748b;
-        --background: #ffffff;
-        --background-dark: #1a1a1a;
-        --text: #1a1a1a;
-        --text-dark: #ffffff;
-        --card-background: #ffffff;
-        --card-background-dark: #2d2d2d;
-        --hover-background: #f3f4f6;
-        --hover-background-dark: #252525;
-        --hover-primary: rgba(77, 77, 77, 0.1);
-        --hover-primary-dark: rgba(37, 99, 235, 0.2);
-        --hover-danger: rgba(220, 38, 38, 0.1);
-        --hover-danger-dark: rgba(220, 38, 38, 0.2);
-        --row-even: #f9fafb;
-        --row-even-dark: #2b2b2b;
-        --row-odd: transparent;
-        --row-odd-dark: #1a1a1a;
-      }
 
-      [data-theme="dark"] {
-        background-color: var(--background-dark);
-        color: var(--text-dark);
-      }
-
-      [data-theme="dark"] .theme-card {
-        background-color: var(--card-background-dark);
-      }
-
-      [data-theme="dark"] .theme-hover:hover {
-        background-color: var(--hover-background-dark);
-      }
-
-      [data-theme="dark"] .theme-hover-primary:hover {
-        background-color: var(--hover-primary-dark);
-      }
-
-      [data-theme="dark"] .theme-hover-danger:hover {
-        background-color: var(--hover-danger-dark);
-      }
-
-      [data-theme="dark"] .theme-row-even {
-        background-color: var(--row-even-dark);
-      }
-
-      [data-theme="dark"] .theme-row-odd {
-        background-color: var(--row-odd-dark);
-      }
-
-      [data-theme="light"] {
-        background-color: var(--background);
-        color: var(--text);
-      }
-
-      [data-theme="light"] .theme-card {
-        background-color: var(--card-background);
-      }
-
-      [data-theme="light"] .theme-hover:hover {
-        background-color: var(--hover-background);
-      }
-
-      [data-theme="light"] .theme-hover-primary:hover {
-        background-color: var(--hover-primary);
-      }
-
-      [data-theme="light"] .theme-hover-danger:hover {
-        background-color: var(--hover-danger);
-      }
-
-      [data-theme="light"] .theme-row-even {
-        background-color: var(--row-even);
-      }
-
-      [data-theme="light"] .theme-row-odd {
-        background-color: var(--row-odd);
-      }
-
-      .mobile-menu-closed {
-        display: none;
-      }
-
-      @media (max-width: 640px) {
-        .mobile-menu {
-          position: fixed;
-          top: 64px;
-          left: 0;
-          right: 0;
-          padding: 1rem;
-          z-index: 50;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OPDShelf</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+              950: '#172554',
+            },
+            dark: {
+              bg: '#0f172a',
+              card: '#1e293b',
+              text: '#f8fafc',
+              muted: '#94a3b8'
+            }
+          }
         }
-
-        [data-theme="dark"] .mobile-menu {
-          background-color: var(--card-background-dark);
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer base {
+        body {
+          @apply font-sans antialiased bg-slate-50 text-slate-900 dark:bg-dark-bg dark:text-dark-text transition-colors duration-300;
         }
-
-        [data-theme="light"] .mobile-menu {
-          background-color: var(--card-background);
+      }
+      @layer components {
+        .theme-card {
+          @apply bg-white dark:bg-dark-card rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 transition-colors duration-300;
+        }
+        .btn-primary {
+          @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 shadow-sm hover:shadow;
+        }
+        .btn-icon {
+          @apply p-2 rounded-lg text-slate-500 hover:text-primary-600 hover:bg-primary-50 dark:text-slate-400 dark:hover:text-primary-400 dark:hover:bg-slate-800 transition-all duration-200;
         }
       }
     </style>
-  </head>
-  <body class="min-h-screen flex flex-col">
-    <header class="theme-card">
-      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1 flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <img src="/static/icon.png" alt="OPDShelf" class="h-14 w-14" />
-          <h2 class="text-xl font-semibold">OPDShelf</h2>
+</head>
+
+<body
+  class="min-h-screen flex flex-col selection:bg-primary-200 selection:text-primary-900 dark:selection:bg-primary-900 dark:selection:text-primary-100">
+  <header
+    class="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-dark-card/80 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="relative group">
+          <div
+            class="absolute -inset-1 bg-gradient-to-r from-primary-600 to-primary-400 rounded-full blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200">
+          </div>
+          <img src="/static/icon.png" alt="OPDShelf"
+            class="relative h-10 w-10 transform transition-transform group-hover:scale-105" />
         </div>
-        <!-- Desktop Menu -->
-        <div class="hidden sm:flex items-center space-x-6">
-          <a href="/" class="text-sm hover:text-primary transition-colors">OPDS Feed</a>
-          <a href="/admin" class="text-sm hover:text-primary transition-colors">Admin Panel</a>
-          <button class="p-2 rounded-full theme-hover transition-colors" onclick="toggleTheme()">
-            🌙
-          </button>
-        </div>
-        <!-- Mobile Menu Button -->
-        <button class="sm:hidden p-2 rounded-full theme-hover transition-colors" onclick="toggleMobileMenu()">
-          <i class="fas fa-bars"></i>
+        <h1
+          class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300">
+          OPDShelf</h1>
+      </div>
+
+      <!-- Desktop Menu -->
+      <div class="hidden sm:flex items-center space-x-2">
+        <a href="/"
+          class="px-4 py-2 font-medium text-sm text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">OPDS
+          Feed</a>
+        <a href="/admin"
+          class="px-4 py-2 font-medium text-sm text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Admin
+          Panel</a>
+        <div class="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-2"></div>
+        <button class="btn-icon" onclick="toggleTheme()" title="Toggle Theme">
+          <i class="fas fa-moon dark:hidden"></i>
+          <i class="fas fa-sun hidden dark:block"></i>
         </button>
-      </nav>
-      <!-- Mobile Menu -->
-      <div id="mobile-menu" class="mobile-menu mobile-menu-closed theme-card shadow-lg sm:hidden">
-        <div class="flex flex-col space-y-4">
-          <a href="/" class="text-sm hover:text-primary transition-colors p-2 rounded theme-hover">OPDS Feed</a>
-          <a href="/admin" class="text-sm hover:text-primary transition-colors p-2 rounded theme-hover">Admin Panel</a>
-          <button class="p-2 rounded theme-hover transition-colors text-left" onclick="toggleTheme()">
-            Toggle Theme 🌙
-          </button>
-        </div>
       </div>
-    </header>
 
-    <main class="flex-grow">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {{template "content" .}}
+      <!-- Mobile Menu Button -->
+      <button class="sm:hidden btn-icon" onclick="toggleMobileMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu"
+      class="hidden sm:hidden bg-white dark:bg-dark-card border-b border-slate-200 dark:border-slate-800 absolute w-full shadow-lg">
+      <div class="px-4 py-3 flex flex-col space-y-2">
+        <a href="/"
+          class="p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium transition-colors">
+          <i class="fas fa-rss w-6"></i> OPDS Feed
+        </a>
+        <a href="/admin"
+          class="p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium transition-colors">
+          <i class="fas fa-cog w-6"></i> Admin Panel
+        </a>
+        <button
+          class="p-3 w-full text-left rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium transition-colors"
+          onclick="toggleTheme()">
+          <i class="fas fa-moon w-6 dark:hidden"></i>
+          <i class="fas fa-sun w-6 hidden dark:block"></i>
+          Toggle Theme
+        </button>
       </div>
-    </main>
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('book');
-        const fileInfo  = document.getElementById('fileInfo');
+    </div>
+  </header>
 
-        // Prevenir comportamientos por defecto
-        ['dragenter','dragover','dragleave','drop'].forEach(evt => {
-          dropZone.addEventListener(evt, e => {
-            e.preventDefault();
-            e.stopPropagation();
-          });
-        });
+  <main class="flex-grow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up">
+      {{template "content" .}}
+    </div>
+  </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('book');
+      const fileInfo = document.getElementById('fileInfo');
 
-        // Efecto visual al arrastrar
-        dropZone.addEventListener('dragover', () => dropZone.classList.add('bg-primary/10'));
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('bg-primary/10'));
-
-        // Manejar la soltar
-        dropZone.addEventListener('drop', e => {
-          const files = e.dataTransfer.files;
-          if (files.length === 0) return;
-
-          const file = files[0];
-          const validTypes = ['application/pdf', 'application/epub+zip'];
-          if (!validTypes.includes(file.type)) {
-            fileInfo.classList.remove('hidden');
-            fileInfo.textContent = 'Formato no válido. Solo EPUB o PDF.';
-            return;
-          }
-
-          // Asignar al input y mostrar info
-          fileInput.files = files;
-          const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-          fileInfo.classList.remove('hidden');
-          fileInfo.textContent = `Archivo seleccionado: ${file.name} (${sizeMB} MB)`;
-
-          // Auto-submit the form
-          const uploadForm = document.getElementById('uploadForm');
-          if (uploadForm) uploadForm.submit();
-        });
-
-        // También al cambiar por clic
-        fileInput.addEventListener('change', () => {
-          const file = fileInput.files[0];
-          if (!file) return;
-          const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-          fileInfo.classList.remove('hidden');
-          fileInfo.textContent = `Archivo seleccionado: ${file.name} (${sizeMB} MB)`;
-
-          // Auto-submit the form
-          const uploadForm = document.getElementById('uploadForm');
-          if (uploadForm) uploadForm.submit();
+      // Prevenir comportamientos por defecto
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+        dropZone.addEventListener(evt, e => {
+          e.preventDefault();
+          e.stopPropagation();
         });
       });
-    </script>
 
-    <script>
-      function toggleTheme() {
-        const html = document.documentElement;
-        const newTheme = html.dataset.theme === "dark" ? "light" : "dark";
-        html.dataset.theme = newTheme;
-        localStorage.setItem("theme", newTheme);
-      }
+      // Efecto visual al arrastrar
+      dropZone.addEventListener('dragover', () => dropZone.classList.add('bg-primary/10'));
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('bg-primary/10'));
 
-      function toggleMobileMenu() {
-        const mobileMenu = document.getElementById('mobile-menu');
-        mobileMenu.classList.toggle('mobile-menu-closed');
-      }
+      // Manejar la soltar
+      dropZone.addEventListener('drop', e => {
+        const files = e.dataTransfer.files;
+        if (files.length === 0) return;
 
-      (function () {
-        const savedTheme = localStorage.getItem("theme");
-        if (savedTheme) {
-          document.documentElement.dataset.theme = savedTheme;
+        const file = files[0];
+        const validTypes = ['application/pdf', 'application/epub+zip'];
+        if (!validTypes.includes(file.type)) {
+          fileInfo.classList.remove('hidden');
+          fileInfo.textContent = 'Formato no válido. Solo EPUB o PDF.';
+          return;
         }
-      })();
-    </script>
-  </body>
+
+        // Asignar al input y mostrar info
+        fileInput.files = files;
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        fileInfo.classList.remove('hidden');
+        fileInfo.textContent = `Archivo seleccionado: ${file.name} (${sizeMB} MB)`;
+
+        // Auto-submit the form
+        const uploadForm = document.getElementById('uploadForm');
+        if (uploadForm) uploadForm.submit();
+      });
+
+      // También al cambiar por clic
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        fileInfo.classList.remove('hidden');
+        fileInfo.textContent = `Archivo seleccionado: ${file.name} (${sizeMB} MB)`;
+
+        // Auto-submit the form
+        const uploadForm = document.getElementById('uploadForm');
+        if (uploadForm) uploadForm.submit();
+      });
+    });
+  </script>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    }
+
+    (function () {
+      const savedTheme = localStorage.getItem("theme");
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
+</body>
+
 </html>
 {{end}}
