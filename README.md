@@ -4,210 +4,120 @@
 <h1 align="center">OPDShelf</h1>
 <p align="center"><em>Host your own OPDS library server in seconds</em></p>
 <p align="center">
+  <a href="#features">Features</a> •
   <a href="#installation">Install</a> •
   <a href="#configuration">Configuration</a> •
-  <a href="#features">Features</a> •
   <a href="#faq">FAQ</a>
 </p>
 
-![](static/screenshot.png)
+<p align="center">
+  <img src="static/screenshot.png" alt="OPDShelf Screenshot" width="800">
+</p>
+
+---
 
 ## Features
-### Simple book hosting
-* Upload EPUB and PDF files via web UI
-* Download books from your browser or any OPDS-compatible reader
-* Delete books from the admin panel
-* OPDS 1.x feed for easy integration with e-readers
-* Recursive directory scanning for organizing books in subfolders
 
-### Fast and lightweight
-* Minimal dependencies
-* Runs as a single Go binary or Docker container
-* Responsive web admin panel
+🚀 **Simple & Fast**
+- Single Go binary or Docker container
+- No database required
+- Minimal resource usage
 
-### Easy to use
-* Drag-and-drop or click to upload
-* No database required
-* Works on Windows, Linux, macOS, and ARM devices
+📚 **Full Format Support**
+- EPUB, PDF, FB2, MOBI, AZW, CBZ, CBR, DJVU, RTF, TXT
+- Automatic cover extraction
+- Recursive directory scanning
 
-### Mobile-friendly
-* Admin panel and OPDS feed accessible from any device
+🖥️ **Modern Web UI**
+- Drag-and-drop uploads
+- Responsive admin panel
+- Dark mode support
 
-<br>
+📱 **OPDS Compatible**
+- Works with any OPDS reader (Moon+ Reader, KOReader, Calibre, etc.)
+- OPDS 1.x feed
 
-## Configuration
-
-No configuration is required for basic usage. By default, books are stored in the `books/` directory. You can change the port, host, and books directory using environment variables:
-
-| Variable    | Default      | Description                |
-|-------------|--------------|----------------------------|
-| PORT        | 3000         | Port to listen on          |
-| HOST        | 0.0.0.0      | Host to bind to            |
-| BOOKS_DIR   | ./books      | Directory to store books   |
-
-You can set these in your Docker Compose file or as environment variables when running the binary.
-
-<br>
+---
 
 ## Installation
 
-Choose one of the following methods:
-
-<details>
-<summary><strong>Docker Compose (recommended)</strong></summary>
-<br>
-
-Create a `docker-compose.yml` file:
+### Docker Compose (Recommended)
 
 ```yaml
-version: '3.8'
 services:
-  opds-server:
+  opdshelf:
     image: koalilla/opds-server:latest
-    container_name: opds-server
+    container_name: opdshelf
     ports:
       - "3000:3000"
     volumes:
       - ./books:/app/books
     restart: unless-stopped
-    environment:
-      - PORT=3000
-      - HOST=0.0.0.0
 ```
-
-Then run:
 
 ```bash
 docker compose up -d
 ```
 
-Access the admin panel at [http://localhost:3000/admin](http://localhost:3000/admin)
+Access the admin panel at **http://localhost:3000/admin**
 
-</details>
+### Binary
 
-<details>
-<summary><strong>Manual binary installation</strong></summary>
-<br>
-
-1. Download the latest release for your OS from the [releases page](https://github.com/koalilla/opds-server/releases).
-2. Extract the binary and run it:
+1. Download the latest release from the [releases page](https://github.com/DanielPereod/opdshelf/releases)
+2. Run the binary:
 
 ```bash
 ./opds-server
 ```
 
-3. Visit [http://localhost:3000/admin](http://localhost:3000/admin) to upload books.
+3. Open **http://localhost:3000/admin**
 
-</details>
+---
 
-<details>
-<summary><strong>Example: Docker Compose (CasaOS compatible)</strong></summary>
-<br>
+## Configuration
 
-Here is an example `docker-compose.yml` you can use (compatible with CasaOS):
+| Variable  | Default   | Description            |
+|-----------|-----------|------------------------|
+| `PORT`    | `3000`    | Port to listen on      |
+| `HOST`    | `0.0.0.0` | Host to bind to        |
+| `BOOKS_DIR` | `./books` | Directory for books  |
 
-```yaml
-name: resilient_erik
-services:
-  opds-server:
-    build:
-      context: /tmp/casaos-compose-app-3364774096
-      dockerfile: Dockerfile
-    cpu_shares: 90
-    command: []
-    container_name: opds-server
-    deploy:
-      resources:
-        limits:
-          memory: 15766M
-    environment:
-      - BOOKS_DIR=/app/books
-      - HOST=0.0.0.0
-      - PORT=3000
-    hostname: opds-server
-    image: koalilla/opds-server:latest
-    labels:
-      icon: https://cdn.jsdelivr.net/gh/DanielPereod/opdshelf/static/icon.png
-    ports:
-      - target: 3000
-        published: "3423"
-        protocol: tcp
-    restart: unless-stopped
-    volumes:
-      - type: bind
-        source: /DATA/Media/Books
-        target: /app/books
-    devices: []
-    cap_add: []
-    network_mode: bridge
-    privileged: false
-x-casaos:
-  author: self
-  category: self
-  hostname: ""
-  icon: https://cdn.jsdelivr.net/gh/DanielPereod/opdshelf/static/icon.png
-  index: /admin
-  is_uncontrolled: false
-  port_map: "3423"
-  scheme: http
-  store_app_id: resilient_erik
-  title:
-    custom: OPDShelf
-    en_us: opds-server
+---
+
+## Building from Source
+
+```bash
+# Requires Go >= 1.23
+go build -o opds-server ./cmd/server
 ```
 
-> **Note:**
-> To access the admin dashboard, navigate to `/admin` (for example: `http://localhost:3423/admin`).
-</details>
-
-<br>
-
-## Common issues
-<details>
-<summary><strong>Books not showing up</strong></summary>
-Make sure your files are in the correct `books/` directory and have the `.epub` or `.pdf` extension.
-</details>
-
-<details>
-<summary><strong>Cannot upload large files</strong></summary>
-The default upload limit is 100MB. For larger files, increase the server's max upload size in the code or reverse proxy.
-</details>
-
-<br>
+---
 
 ## FAQ
+
 <details>
 <summary><strong>What is OPDS?</strong></summary>
-OPDS (Open Publication Distribution System) is a standard for sharing digital books via web feeds, supported by many e-readers and apps.
+
+OPDS (Open Publication Distribution System) is a standard for sharing digital books via web feeds, supported by most e-reader apps.
 </details>
 
 <details>
-<summary><strong>How do I access my library from an e-reader?</strong></summary>
+<summary><strong>How do I connect my e-reader?</strong></summary>
+
 Add your server's OPDS URL (shown in the admin panel) to your reader app.
 </details>
 
 <details>
-<summary><strong>How do I change the port or books directory?</strong></summary>
-Set the `PORT`, `HOST`, or `BOOKS_DIR` environment variables before starting the server.
+<summary><strong>Books not showing up?</strong></summary>
+
+Ensure files are in the `books/` directory with supported extensions.
 </details>
 
-<br>
-
-## Building from source
-
-Requirements: [Go](https://go.dev/dl/) >= v1.23
-
-```bash
-go build -o opds-server ./cmd/server
-```
-
-<br>
+---
 
 ## Contributing
 
-Pull requests and issues are welcome! Please open an issue to discuss new features before submitting a PR.
-
-<br>
+Pull requests welcome! Open an issue first for feature discussions.
 
 ## License
 
