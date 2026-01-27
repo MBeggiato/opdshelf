@@ -1,20 +1,18 @@
-<!-- templates/admin.html -->
-{{define "content"}}
 <div class="space-y-8 animate-fade-in-up">
   <!-- Upload Section -->
   <div class="theme-card p-8 text-center transition-transform hover:scale-[1.01] duration-300">
     <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
       <div id="dropZone"
-        class="group cursor-pointer rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 py-12 px-6 transition-all duration-300 hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/10 dark:hover:border-primary-500">
+        class="group cursor-pointer rounded-2xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50 py-12 px-6 transition-all duration-300 hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/10 dark:hover:border-primary-500">
         <div class="flex flex-col items-center space-y-4">
           <div
-            class="p-4 bg-white dark:bg-slate-800 rounded-full shadow-sm group-hover:scale-110 group-hover:text-primary-600 transition-all duration-300">
+            class="p-4 bg-white dark:bg-neutral-800 rounded-full shadow-sm group-hover:scale-110 group-hover:text-primary-600 transition-all duration-300">
             <i
-              class="fas fa-cloud-upload-alt text-4xl text-slate-400 group-hover:text-primary-600 dark:text-slate-500"></i>
+              class="fas fa-cloud-upload-alt text-4xl text-neutral-400 group-hover:text-primary-600 dark:text-neutral-500"></i>
           </div>
           <div class="space-y-2">
-            <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Upload a Book</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Upload a Book</h3>
+            <p class="text-sm text-neutral-500 dark:text-neutral-400 max-w-sm mx-auto">
               Support for EPUB, PDF, FB2, MOBI, AZW, CBZ, CBR, DJVU, RTF, TXT
             </p>
           </div>
@@ -36,56 +34,56 @@
   <!-- Book Collection -->
   <div>
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-      <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Library Collection <span id="booksCount"
-          class="text-sm font-normal text-slate-500 ml-2">({{len .Books}} books)</span></h2>
+      <h2 class="text-2xl font-bold text-neutral-900 dark:text-white">Library Collection <span id="booksCount"
+          class="text-sm font-normal text-neutral-500 ml-2">({{len books}} books)</span></h2>
       <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
         <div class="relative flex-grow sm:w-64">
           <input type="text" id="bookSearch" placeholder="Search books..."
-            class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all">
-          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            class="w-full pl-10 pr-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all">
+          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"></i>
         </div>
         <div class="relative">
           <select id="bookSort"
-            class="w-full sm:w-48 pl-10 pr-8 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer">
-            <option value="name-asc" {{if eq .SortMode "name-asc" }}selected{{end}}>Name (A-Z)</option>
-            <option value="name-desc" {{if eq .SortMode "name-desc" }}selected{{end}}>Name (Z-A)</option>
-            <option value="date-desc" {{if or (eq .SortMode "date-desc" ) (eq .SortMode "" )}}selected{{end}}>Newest
+            class="w-full sm:w-48 pl-10 pr-8 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer">
+            <option value="name-asc" {{#if (eq sortMode "name-asc" )}}selected{{/if}}>Name (A-Z)</option>
+            <option value="name-desc" {{#if (eq sortMode "name-desc" )}}selected{{/if}}>Name (Z-A)</option>
+            <option value="date-desc" {{#if (or (eq sortMode "" ) (eq sortMode "date-desc" ))}}selected{{/if}}>Newest
               First</option>
-            <option value="date-asc" {{if eq .SortMode "date-asc" }}selected{{end}}>Oldest First</option>
+            <option value="date-asc" {{#if (eq sortMode "date-asc" )}}selected{{/if}}>Oldest First</option>
           </select>
-          <i class="fas fa-sort-amount-down absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <i class="fas fa-sort-amount-down absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"></i>
           <i
-            class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+            class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none text-xs"></i>
         </div>
       </div>
     </div>
 
-    {{if .Books}}
+    {{#if books}}
     <div id="booksGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-      {{range .Books}}
-      <div data-title="{{.Title}}" data-added="{{.LastUpdated.Unix}}"
-        class="book-card group relative theme-card overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+      {{#each books}}
+      <div data-title="{{this.title}}" data-added="{{this.lastUpdated}}"
+        class="book-card group relative theme-card overflow-hidden hover:shadow-lg hover:-tranneutral-y-1 transition-all duration-300 flex flex-col h-full">
         <!-- Cover Image -->
-        <div class="aspect-[2/3] relative overflow-hidden bg-slate-100 dark:bg-slate-800">
-          <img src="/cover/{{.Filename}}"
+        <div class="aspect-[2/3] relative overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+          <img src="/cover/{{this.filename}}"
             class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            alt="{{.Title}}" loading="lazy"
-            onerror="this.onerror=null;this.src='https://placehold.co/200x300/e2e8f0/64748b?text=No+Cover';">
+            alt="{{this.title}}" loading="lazy"
+            onerror="this.onerror=null;this.src='https://placehold.co/200x300/e5e5e5/737373?text=No+Cover';">
 
           <!-- Overlay Actions -->
           <div
             class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-3 backdrop-blur-sm">
-            <button onclick="openRenameModal('{{.Filename}}')"
+            <button onclick="openRenameModal('{{this.filename}}')"
               class="p-3 bg-white text-primary-600 rounded-full hover:bg-primary-600 hover:text-white transition-all transform hover:scale-110 shadow-lg"
               title="Edit Filename">
               <i class="fas fa-edit"></i>
             </button>
-            <a href="/books/{{.Filename}}"
-              class="p-3 bg-white text-slate-900 rounded-full hover:bg-primary-500 hover:text-white transition-all transform hover:scale-110 shadow-lg"
+            <a href="/books/{{this.filename}}"
+              class="p-3 bg-white text-neutral-900 rounded-full hover:bg-primary-500 hover:text-white transition-all transform hover:scale-110 shadow-lg"
               title="Download" download>
               <i class="fas fa-download"></i>
             </a>
-            <form action="/delete/{{.Filename}}" method="post" onsubmit="return confirm('Delete {{.Title}}?');">
+            <form action="/delete/{{this.filename}}" method="post" onsubmit="return confirm('Delete {{this.title}}?');">
               <button type="submit"
                 class="p-3 bg-white text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all transform hover:scale-110 shadow-lg"
                 title="Delete">
@@ -97,80 +95,82 @@
 
         <!-- Content -->
         <div class="p-4 flex flex-col flex-grow">
-          <h3 class="font-semibold text-slate-900 dark:text-white text-sm line-clamp-2 mb-2 leading-tight"
-            title="{{.Title}}">{{.Title}}</h3>
-          <div class="mt-auto flex items-center justify-between text-xs font-medium text-slate-500 dark:text-slate-400">
-            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-              {{.MimeType | simpleMime}}
+          <h3 class="font-semibold text-neutral-900 dark:text-white text-sm line-clamp-2 mb-2 leading-tight"
+            title="{{this.title}}">{{this.title}}</h3>
+          <div
+            class="mt-auto flex items-center justify-between text-xs font-medium text-neutral-500 dark:text-neutral-400">
+            <span class="px-2 py-1 rounded bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300">
+              {{simpleMime this.mimeType}}
             </span>
-            <span>{{formatSize .Size}}</span>
+            <span>{{formatSize this.size}}</span>
           </div>
         </div>
       </div>
-      {{end}}
+      {{/each}}
     </div>
     {{else}}
     <div class="text-center py-20 theme-card rounded-2xl border-dashed border-2">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 mb-4">
-        <i class="fas fa-book-open text-3xl text-slate-400"></i>
+      <div
+        class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-neutral-100 dark:bg-neutral-800 mb-4">
+        <i class="fas fa-book-open text-3xl text-neutral-400"></i>
       </div>
-      <h3 class="text-lg font-medium text-slate-900 dark:text-white mb-1">No books yet</h3>
-      <p class="text-slate-500">Upload some books to get started with your library.</p>
+      <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-1">No books yet</h3>
+      <p class="text-neutral-500">Upload some books to get started with your library.</p>
     </div>
-    {{end}}
+    {{/if}}
   </div>
 
   <!-- OPDS Info -->
   <div
-    class="theme-card p-6 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
+    class="theme-card p-6 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-neutral-50 to-white dark:from-neutral-800 dark:to-neutral-900">
     <div class="flex items-center space-x-4">
       <div class="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-lg text-primary-600 dark:text-primary-400">
         <i class="fas fa-rss text-xl"></i>
       </div>
       <div>
-        <h3 class="font-medium text-slate-900 dark:text-white">OPDS Feed URL</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400">Add this to your reader app. Support sorting with
+        <h3 class="font-medium text-neutral-900 dark:text-white">OPDS Feed URL</h3>
+        <p class="text-sm text-neutral-500 dark:text-neutral-400">Add this to your reader app. Support sorting with
           <code>?sort=name-asc|date-desc</code>
         </p>
       </div>
     </div>
     <div
-      class="flex items-center w-full sm:w-auto bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 shadow-sm">
+      class="flex items-center w-full sm:w-auto bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg p-2 shadow-sm">
       <code id="opdsUrlDisplay"
-        class="text-sm text-slate-600 dark:text-slate-300 font-mono flex-grow px-2 truncate selection:bg-primary-100">{{.BaseURL}}</code>
-      <button id="opdsCopyBtn" data-base-url="{{.BaseURL}}"
-        class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-400 hover:text-primary-600 transition-colors"
+        class="text-sm text-neutral-600 dark:text-neutral-300 font-mono flex-grow px-2 truncate selection:bg-primary-100">{{baseUrl}}</code>
+      <button id="opdsCopyBtn" data-base-url="{{baseUrl}}"
+        class="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-neutral-400 hover:text-primary-600 transition-colors"
         title="Copy URL">
         <i class="far fa-copy"></i>
       </button>
     </div>
   </div>
 </div>
-</div>
 
 <!-- Rename Modal -->
 <div id="renameModal"
   class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden animate-fade-in">
-  <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-6 w-full max-w-md transform transition-all scale-100">
-    <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Rename Book</h3>
+  <div
+    class="bg-white dark:bg-neutral-800 rounded-xl shadow-2xl p-6 w-full max-w-md transform transition-all scale-100">
+    <h3 class="text-xl font-bold mb-4 text-neutral-900 dark:text-white">Rename Book</h3>
     <form action="/rename" method="post" id="renameForm">
       <input type="hidden" id="oldFilename" name="oldFilename" value="">
       <div class="space-y-4">
         <div>
-          <label for="newFilename" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Book
+          <label for="newFilename" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Book
             Name</label>
           <div class="flex rounded-md shadow-sm">
             <input type="text" id="newFilename" name="newFilename" required
-              class="flex-1 min-w-0 block w-full px-4 py-2 rounded-l-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all">
+              class="flex-1 min-w-0 block w-full px-4 py-2 rounded-l-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all">
             <span id="fileExtension"
-              class="inline-flex items-center px-3 rounded-r-lg border border-l-0 border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-sm">
+              class="inline-flex items-center px-3 rounded-r-lg border border-l-0 border-neutral-300 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 text-sm">
               .ext
             </span>
           </div>
         </div>
         <div class="flex justify-end space-x-3 pt-2">
           <button type="button" onclick="closeRenameModal()"
-            class="px-4 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+            class="px-4 py-2 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
             Cancel
           </button>
           <button type="submit"
@@ -182,7 +182,7 @@
     </form>
   </div>
 </div>
-<script data-total-books="{{len .Books}}">
+<script data-total-books="{{len books}}">
   document.addEventListener("DOMContentLoaded", () => {
     const dropZone = document.getElementById("dropZone");
     const fileInput = document.getElementById("book");
@@ -240,10 +240,10 @@
 
       // Asignar al input y mostrar info
       fileInput.files = files;
-      const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-      fileInfo.classList.remove("hidden", "text-red-600", "bg-red-50");
-      fileInfo.classList.add("text-primary-600", "bg-primary-50");
-      fileInfo.textContent = `Selected: ${file.name} (${sizeMB} MB)`;
+      // const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+      // fileInfo.classList.remove("hidden", "text-red-600", "bg-red-50");
+      // fileInfo.classList.add("text-primary-600", "bg-primary-50");
+      // fileInfo.textContent = `Selected: ${file.name} (${sizeMB} MB)`;
 
       // Auto-submit
       document.getElementById("uploadForm").submit();
@@ -254,11 +254,14 @@
 
     // También al cambiar por clic
     fileInput.addEventListener("change", () => {
-      const file = fileInput.files[0];
-      if (!file) return;
-      const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-      fileInfo.classList.remove("hidden");
-      fileInfo.textContent = `Archivo seleccionado: ${file.name} (${sizeMB} MB)`;
+      // const file = fileInput.files[0];
+      // if (!file) return;
+      // const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+      // fileInfo.classList.remove("hidden");
+      // fileInfo.textContent = `Archivo seleccionado: ${file.name} (${sizeMB} MB)`;
+
+      // Auto-submit immediately on selection
+      document.getElementById("uploadForm").submit();
     });
 
   });
@@ -336,9 +339,9 @@
       } else if (sortMode === 'name-desc') {
         return b.dataset.title.localeCompare(a.dataset.title);
       } else if (sortMode === 'date-desc') {
-        return parseInt(b.dataset.added) - parseInt(a.dataset.added);
+        return (new Date(b.dataset.added).getTime()) - (new Date(a.dataset.added).getTime());
       } else if (sortMode === 'date-asc') {
-        return parseInt(a.dataset.added) - parseInt(b.dataset.added);
+        return (new Date(a.dataset.added).getTime()) - (new Date(b.dataset.added).getTime());
       }
       return 0;
     });
@@ -396,4 +399,3 @@
     updateOpdsUrl();
   }
 </script>
-{{end}}

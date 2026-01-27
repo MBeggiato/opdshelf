@@ -1,46 +1,35 @@
-FROM golang:1.23-alpine AS builder
+FROM oven/bun:1-alpine AS base
 
-# Set working directory
+# Install dependencies only when needed
+FROM base AS deps
 WORKDIR /app
+COPY package.json bun.lock* ./
+RUN bun install --frozen-lockfile
 
-# Install dependencies
-RUN apk add --no-cache git
-
-# Copy go module files
-COPY go.mod go.sum ./
-
-# Download dependencies
-RUN go mod download
-
-# Copy source code
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -o opds-server ./cmd/server
-
-# Use a smaller image for the final container
-FROM alpine:latest
-
-# Install certificates for HTTPS
-RUN apk --no-cache add ca-certificates
-
-# Set working directory
+# Production image, copy all the files and run next
+FROM base AS runner
 WORKDIR /app
 
-# Copy binary from builder stage
-COPY --from=builder /app/opds-server /app/opds-server
-
-# Copy templates and static files
-COPY --from=builder /app/templates /app/templates
-COPY --from=builder /app/static /app/static
-
-# Create books directory
-RUN mkdir -p /app/books
-
-# Set environment variables
+ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
 ENV BOOKS_DIR=/app/books
+
+# Copy built files
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/views ./views
+COPY --from=builder /app/static ./static
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+# Create books directory
+RUN mkdir -p /app/books
 
 # Expose the port
 EXPOSE 3000
@@ -49,4 +38,4 @@ EXPOSE 3000
 VOLUME ["/app/books"]
 
 # Run the application
-CMD ["/app/opds-server"]
+CMD ["bun", "run", "src/index.ts"]

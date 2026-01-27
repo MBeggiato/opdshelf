@@ -19,7 +19,7 @@
 ## Features
 
 🚀 **Simple & Fast**
-- Single Go binary or Docker container
+- Powered by **Bun** for high performance
 - No database required
 - Minimal resource usage
 
@@ -61,7 +61,7 @@ Example: `http://localhost:3000/?sort=name-asc`
 ```yaml
 services:
   opdshelf:
-    image: koalilla/opds-server:latest
+    build: .
     container_name: opdshelf
     ports:
       - "3000:3000"
@@ -78,11 +78,12 @@ Access the admin panel at **http://localhost:3000/admin**
 
 ### Binary
 
-1. Download the latest release from the [releases page](https://github.com/DanielPereod/opdshelf/releases)
-2. Run the binary:
+1. Install [Bun](https://bun.sh)
+2. Install dependencies and run:
 
 ```bash
-./opds-server
+bun install
+bun run start
 ```
 
 3. Open **http://localhost:3000/admin**
@@ -102,8 +103,8 @@ Access the admin panel at **http://localhost:3000/admin**
 ## Building from Source
 
 ```bash
-# Requires Go >= 1.23
-go build -o opds-server ./cmd/server
+# Requires Bun
+bun build --compile --outfile opds-server ./src/index.ts
 ```
 
 ---

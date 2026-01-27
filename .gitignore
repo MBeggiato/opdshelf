@@ -1,4 +1,6 @@
 .env
-.githib
+.github
 opds-server.exe
 books/
+node_modules
+github
