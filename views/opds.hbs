@@ -10,13 +10,15 @@
 
   {{#each books}}
   <entry>
-    <id>{{../baseUrl}}/books/{{this.filename}}</id>
+    <id>{{../baseUrl}}/book/{{urlEncode this.filename}}</id>
     <title>{{this.title}}</title>
     <updated>{{this.lastUpdated}}</updated>
-    <link rel="http://opds-spec.org/acquisition" href="{{../baseUrl}}/books/{{this.filename}}" type="{{this.mimeType}}"
-      length="{{this.size}}" />
-    <link rel="http://opds-spec.org/image" href="{{../baseUrl}}/cover/{{this.filename}}" type="image/jpeg" />
-    <link rel="http://opds-spec.org/image/thumbnail" href="{{../baseUrl}}/cover/{{this.filename}}" type="image/jpeg" />
+    <link rel="http://opds-spec.org/acquisition" href="{{../baseUrl}}/book/{{urlEncode this.filename}}"
+      type="{{this.mimeType}}" length="{{this.size}}" />
+    <link rel="http://opds-spec.org/image" href="{{../baseUrl}}/book/cover/{{urlEncode this.filename}}"
+      type="image/jpeg" />
+    <link rel="http://opds-spec.org/image/thumbnail" href="{{../baseUrl}}/book/cover/{{urlEncode this.filename}}"
+      type="image/jpeg" />
   </entry>
   {{/each}}
 </feed>

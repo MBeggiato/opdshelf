@@ -8,9 +8,10 @@ import { getConfig } from '../config';
 const app = new Hono();
 const config = getConfig();
 
-app.get('/book/:filename', async (c) => {
+app.get('/:filename', async (c) => {
   const filePath = path.join(config.BOOKS_DIR, c.req.param('filename'));
 
+  console.log(filePath);
   if (fs.existsSync(filePath)) {
     const stat = fs.statSync(filePath);
     c.header('Content-Type', mime.lookup(filePath) || 'application/octet-stream');
