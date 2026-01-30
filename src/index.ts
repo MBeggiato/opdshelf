@@ -1,4 +1,4 @@
-import app from './routes';
+import app from './routes/index';
 import { getConfig } from './config';
 
 const config = getConfig();

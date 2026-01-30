@@ -1709,3 +1709,7 @@
     }
   }
 }
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}

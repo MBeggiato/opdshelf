@@ -97,6 +97,8 @@ bun run start
 | `PORT`    | `3000`    | Port to listen on      |
 | `HOST`    | `0.0.0.0` | Host to bind to        |
 | `BOOKS_DIR` | `./books` | Directory for books  |
+| `ADMIN_USERNAME` | none | Username (optional) |
+| `ADMIN_PASSWORD` | none | Password (optional) |
 
 ---
 

@@ -1,0 +1,45 @@
+<div class="flex items-center justify-center min-h-[calc(100vh-16rem)]">
+  <div class="theme-card w-full max-w-md p-8 animate-fade-in-up">
+    <div class="text-center mb-4">
+      <div
+        class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900/30 mb-4">
+        <i class="fas fa-user-shield text-2xl text-primary-600 dark:text-primary-400"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-neutral-900 dark:text-white">Admin Login</h2>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-2">Please sign in to continue</p>
+    </div>
+
+    <form action="/user/login" method="POST" class="space-y-6">
+      <div class="mb-4">
+        <label for="username"
+          class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Username</label>
+        <div class="relative">
+          <div class="h-full absolute inset-y-0 left-0 w-10 ml-px flex items-center justify-center pointer-events-none">
+            <i class="fas fa-user text-neutral-400"></i>
+          </div>
+          <input type="text" id="username" name="username" required
+            class="block w-full pl-10 pr-3 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors sm:text-sm"
+            placeholder="Enter your username">
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="password"
+          class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Password</label>
+        <div class="relative">
+          <div class="h-full absolute inset-y-0 left-0 w-10 ml-px flex items-center justify-center pointer-events-none">
+            <i class="fas fa-lock text-neutral-400"></i>
+          </div>
+          <input type="password" id="password" name="password" required
+            class="block w-full pl-10 pr-3 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors sm:text-sm"
+            placeholder="••••••••">
+        </div>
+      </div>
+
+      <button type="submit" class="w-full btn-primary flex justify-center items-center gap-2">
+        <span>Sign In</span>
+        <i class="fas fa-arrow-right text-sm opacity-80"></i>
+      </button>
+    </form>
+  </div>
+</div>
