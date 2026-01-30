@@ -30,7 +30,7 @@ app.post('/login', async (c) => {
   console.log(username, password);
   if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
     // Set a session cookie that lasts 24 hours
-    c.header('Set-Cookie', `auth_session=valid; Path=/; HttpOnly; Max-Age=1296000; Secure; SameSite=Lax`);
+    c.header('Set-Cookie', `auth_session=valid; Path=/; HttpOnly; Max-Age=1296000; SameSite=Lax`);
     c.header('WWW-Authenticate', 'Basic realm="OPDShelf"')
     return c.redirect('/admin');
   }
