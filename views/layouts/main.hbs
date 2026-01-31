@@ -35,13 +35,8 @@
     class="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-dark-card/80 border-b border-neutral-200 dark:border-neutral-800 transition-colors duration-300">
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="relative group">
-          <div
-            class="absolute -inset-1 bg-gradient-to-r from-primary-600 to-primary-400 rounded-full blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200">
-          </div>
-          <img src="/static/icon.png" alt="OPDShelf"
-            class="relative h-10 w-10 transform transition-transform group-hover:scale-105" />
-        </div>
+        <img src="/static/icon.png" alt="OPDShelf"
+          class="relative h-10 w-10 transform transition-transform group-hover:scale-105" />
         <h1
           class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300">
           OPDShelf</h1>
@@ -55,10 +50,10 @@
         <a href="/admin"
           class="px-4 py-2 font-medium text-sm text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Admin
           Panel</a>
-        <div class="w-px h-6 bg-neutral-200 dark:bg-neutral-700 mx-2"></div>
+        <div class="w-px h-4 bg-neutral-200 dark:bg-neutral-700 mx-2"></div>
         <button class="btn-icon" onclick="toggleTheme()" title="Toggle Theme">
-          <i class="fas fa-moon dark:!hidden"></i>
-          <i class="fas fa-sun !hidden dark:!block"></i>
+          <i class="fas h-4 w-4 fa-moon dark:!hidden"></i>
+          <i class="fas h-4 w-4 fa-sun !hidden dark:!block"></i>
         </button>
       </div>
 
@@ -81,7 +76,7 @@
           <i class="fas fa-cog w-6"></i> Admin Panel
         </a>
         <button
-          class="p-3 w-full text-left rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-200 font-medium transition-colors"
+          class="p-3 w-full text-left flex items-center rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-200 font-medium transition-colors"
           onclick="toggleTheme()">
           <i class="fas fa-moon w-6 dark:!hidden"></i>
           <i class="fas fa-sun w-6 !hidden dark:!block"></i>

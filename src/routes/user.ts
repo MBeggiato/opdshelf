@@ -11,7 +11,6 @@ app.use("/login", async (c, next) => {
   const password = process.env.ADMIN_PASSWORD;
 
   if (session === 'valid' || checkBasicAuth(c) || (!username || !password)) {
-    console.log('Authenticated', session, checkBasicAuth(c), username, password);
     return c.redirect('/admin');
   }
 
@@ -27,7 +26,6 @@ app.get('/login', async (c) => {
 
 app.post('/login', async (c) => {
   const { username, password } = await c.req.parseBody();
-  console.log(username, password);
   if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
     // Set a session cookie that lasts 24 hours
     c.header('Set-Cookie', `auth_session=valid; Path=/; HttpOnly; Max-Age=1296000; SameSite=Lax`);

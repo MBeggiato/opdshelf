@@ -63,40 +63,40 @@
     <div id="booksGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
       {{#each books}}
       <div data-title="{{this.title}}" data-added="{{this.lastUpdated}}"
-        class="book-card group relative theme-card overflow-hidden hover:shadow-lg hover:-tranneutral-y-1 transition-all duration-300 flex flex-col h-full">
+        class="book-card group relative theme-card overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full focus:outline-none"
+        tabindex="0"
+        onmouseover="document.getElementById('{{this.filename}}').classList.remove('hidden'); document.getElementById('{{this.filename}}').classList.add('flex')"
+        onmouseout="document.getElementById('{{this.filename}}').classList.add('hidden'); document.getElementById('{{this.filename}}').classList.remove('flex')">
+
         <!-- Cover Image -->
         <div class="aspect-[2/3] relative overflow-hidden bg-neutral-100 dark:bg-neutral-800">
-          <img src="/book/cover/{{this.filename}}"
-            class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            alt="{{this.title}}" loading="lazy"
-            onerror="this.onerror=null;this.src='https://placehold.co/200x300/e5e5e5/737373?text=No+Cover';">
+          <img src="/book/cover/{{this.filename}}" class="w-full h-full object-cover" alt="{{this.title}}"
+            loading="lazy" onerror="this.onerror=null;this.src='/static/no-cover-error.svg';">
+        </div>
 
-          <!-- Overlay Actions -->
-          <div
-            class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-3 backdrop-blur-sm">
-            <button onclick="openRenameModal('{{this.filename}}')"
-              class="p-3 bg-white text-primary-600 rounded-full hover:bg-primary-600 hover:text-white transition-all transform hover:scale-110 shadow-lg"
-              title="Edit Filename">
-              <i class="fas fa-edit"></i>
+        <!-- Overlay Actions -->
+        <div class="flex flex-1 absolute w-full dark:bg-dark-card hidden" id="{{this.filename}}">
+          <button onclick="openRenameModal('{{this.filename}}')"
+            class="py-2 flex-1 text-center text-primary-600 hover:bg-primary-600 hover:text-white  cursor-pointer"
+            title="Edit Filename">
+            <i class="fas fa-edit"></i>
+          </button>
+          <a href="/book/{{this.filename}}"
+            class="py-2 flex-1 text-center text-primary-600 hover:bg-primary-500 hover:text-white  cursor-pointer"
+            title="Download" download>
+            <i class="fas fa-download"></i>
+          </a>
+          <form action="/book/delete/{{this.filename}}" method="post"
+            onsubmit="return confirm('Delete {{this.title}}?');"
+            class="flex-1 text-center text-red-500 hover:bg-red-500 hover:text-white cursor-pointer">
+            <button type="submit" class="cursor-pointer py-2 h-full w-full" title="Delete">
+              <i class="fas fa-trash-alt"></i>
             </button>
-            <a href="/book/{{this.filename}}"
-              class="p-3 bg-white text-neutral-900 rounded-full hover:bg-primary-500 hover:text-white transition-all transform hover:scale-110 shadow-lg"
-              title="Download" download>
-              <i class="fas fa-download"></i>
-            </a>
-            <form action="/book/delete/{{this.filename}}" method="post"
-              onsubmit="return confirm('Delete {{this.title}}?');">
-              <button type="submit"
-                class="p-3 bg-white text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all transform hover:scale-110 shadow-lg"
-                title="Delete">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </form>
-          </div>
+          </form>
         </div>
 
         <!-- Content -->
-        <div class="p-4 flex flex-col flex-grow">
+        <div class="px-4 py-2 flex flex-col flex-grow">
           <h3 class="font-semibold text-neutral-900 dark:text-white text-sm line-clamp-2 mb-2 leading-tight"
             title="{{this.title}}">{{this.title}}</h3>
           <div
@@ -190,7 +190,6 @@
     const fileInput = document.getElementById("book");
     const fileInfo = document.getElementById("fileInfo");
 
-    // Prevenir comportamientos por defecto
     ["dragenter", "dragover", "dragleave", "drop"].forEach((evt) => {
       dropZone.addEventListener(evt, (e) => {
         e.preventDefault();
@@ -198,7 +197,6 @@
       });
     });
 
-    // Efecto visual al arrastrar
     dropZone.addEventListener("dragover", () => {
       dropZone.classList.add("border-primary-500", "bg-primary-50", "dark:bg-primary-900/10");
     });
@@ -206,7 +204,6 @@
       dropZone.classList.remove("border-primary-500", "bg-primary-50", "dark:bg-primary-900/10");
     });
 
-    // Manejar la soltar
     dropZone.addEventListener("drop", (e) => {
       dropZone.classList.remove("border-primary-500", "bg-primary-50", "dark:bg-primary-900/10");
       const files = e.dataTransfer.files;
@@ -244,18 +241,8 @@
       document.getElementById("uploadForm").submit();
     });
 
-    // Handle click on dropzone to trigger input
     dropZone.addEventListener("click", () => fileInput.click());
-
-    // También al cambiar por clic
     fileInput.addEventListener("change", () => {
-      // const file = fileInput.files[0];
-      // if (!file) return;
-      // const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-      // fileInfo.classList.remove("hidden");
-      // fileInfo.textContent = `Archivo seleccionado: ${file.name} (${sizeMB} MB)`;
-
-      // Auto-submit immediately on selection
       document.getElementById("uploadForm").submit();
     });
 

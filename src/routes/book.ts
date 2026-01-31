@@ -1,4 +1,4 @@
-import { getCover } from "../cover";
+import { getCover } from "../helpers/cover";
 import mime from 'mime-types';
 import * as fs from 'fs';
 import * as path from 'path';
