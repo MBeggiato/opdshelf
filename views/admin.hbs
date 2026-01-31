@@ -39,13 +39,11 @@
           class="text-sm font-normal text-neutral-500 ml-2">({{len books}} books)</span></h2>
       <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
         <div class="relative flex-grow sm:w-64">
-          <input type="text" id="bookSearch" placeholder="Search books..."
-            class="w-full pl-10 pr-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all">
+          <input type="text" id="bookSearch" placeholder="Search books..." class="input-field">
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"></i>
         </div>
         <div class="relative">
-          <select id="bookSort"
-            class="w-full sm:w-48 pl-10 pr-8 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer">
+          <select id="bookSort" class="input-field appearance-none cursor-pointer pr-10">
             <option value="name-asc" {{#if (eq sortMode "name-asc" )}}selected{{/if}}>Name (A-Z)</option>
             <option value="name-desc" {{#if (eq sortMode "name-desc" )}}selected{{/if}}>Name (Z-A)</option>
             <option value="date-desc" {{#if (or (eq sortMode "" ) (eq sortMode "date-desc" ))}}selected{{/if}}>Newest
@@ -63,7 +61,7 @@
     <div id="booksGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
       {{#each books}}
       <div data-title="{{this.title}}" data-added="{{this.lastUpdated}}"
-        class="book-card group relative theme-card overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full focus:outline-none"
+        class="book-card dark:bg-dark-card bg-light-card group relative overflow-hidden hover:shadow-lg flex flex-col h-full focus:outline-none rounded"
         tabindex="0"
         onmouseover="document.getElementById('{{this.filename}}').classList.remove('hidden'); document.getElementById('{{this.filename}}').classList.add('flex')"
         onmouseout="document.getElementById('{{this.filename}}').classList.add('hidden'); document.getElementById('{{this.filename}}').classList.remove('flex')">
@@ -72,27 +70,28 @@
         <div class="aspect-[2/3] relative overflow-hidden bg-neutral-100 dark:bg-neutral-800">
           <img src="/book/cover/{{this.filename}}" class="w-full h-full object-cover" alt="{{this.title}}"
             loading="lazy" onerror="this.onerror=null;this.src='/static/no-cover-error.svg';">
-        </div>
 
-        <!-- Overlay Actions -->
-        <div class="flex flex-1 absolute w-full dark:bg-dark-card hidden" id="{{this.filename}}">
-          <button onclick="openRenameModal('{{this.filename}}')"
-            class="py-2 flex-1 text-center text-primary-600 hover:bg-primary-600 hover:text-white  cursor-pointer"
-            title="Edit Filename">
-            <i class="fas fa-edit"></i>
-          </button>
-          <a href="/book/{{this.filename}}"
-            class="py-2 flex-1 text-center text-primary-600 hover:bg-primary-500 hover:text-white  cursor-pointer"
-            title="Download" download>
-            <i class="fas fa-download"></i>
-          </a>
-          <form action="/book/delete/{{this.filename}}" method="post"
-            onsubmit="return confirm('Delete {{this.title}}?');"
-            class="flex-1 text-center text-red-500 hover:bg-red-500 hover:text-white cursor-pointer">
-            <button type="submit" class="cursor-pointer py-2 h-full w-full" title="Delete">
-              <i class="fas fa-trash-alt"></i>
+          <!-- Overlay Actions -->
+          <div class="flex flex-1 absolute bottom-0 w-full bg-light-card dark:bg-dark-card hidden"
+            id="{{this.filename}}">
+            <button onclick="openRenameModal('{{this.filename}}')"
+              class="py-2 flex-1 text-center text-primary-600 hover:bg-primary-600 hover:text-white  cursor-pointer"
+              title="Edit Filename">
+              <i class="fas fa-edit"></i>
             </button>
-          </form>
+            <a href="/book/info/{{this.filename}}"
+              class="py-2 flex-1 text-center text-primary-600 hover:bg-primary-500 hover:text-white  cursor-pointer"
+              title="View Details">
+              <i class="fas fa-eye"></i>
+            </a>
+            <form action="/book/delete/{{this.filename}}" method="post"
+              onsubmit="return confirm('Delete {{this.title}}?');"
+              class="flex-1 text-center text-red-500 hover:bg-red-500 hover:text-white cursor-pointer">
+              <button type="submit" class="cursor-pointer py-2 h-full w-full" title="Delete">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </form>
+          </div>
         </div>
 
         <!-- Content -->
@@ -111,7 +110,7 @@
       {{/each}}
     </div>
     {{else}}
-    <div class="text-center py-20 theme-card rounded-2xl border-dashed border-2">
+    <div class="text-center py-20 rounded-2xl border-dashed border-2">
       <div
         class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-neutral-100 dark:bg-neutral-800 mb-4">
         <i class="fas fa-book-open text-3xl text-neutral-400"></i>
@@ -163,7 +162,7 @@
             Name</label>
           <div class="flex rounded-md shadow-sm">
             <input type="text" id="newFilename" name="newFilename" required
-              class="flex-1 min-w-0 block w-full px-4 py-2 rounded-l-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all">
+              class="input-field flex-1 min-w-0 rounded-r-none">
             <span id="fileExtension"
               class="inline-flex items-center px-3 rounded-r-lg border border-l-0 border-neutral-300 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 text-sm">
               .ext

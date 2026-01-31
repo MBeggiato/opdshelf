@@ -1,9 +1,11 @@
-import { getCover } from "../helpers/cover";
+import { getBookInfo } from "../helpers/cover";
+import { renderView } from "../helpers/renderers";
 import mime from 'mime-types';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Hono } from "hono";
 import { getConfig } from '../config';
+import { BookInfo } from "../types";
 
 const app = new Hono();
 const config = getConfig();
@@ -78,15 +80,32 @@ app.post('/rename', async (c) => {
   return c.redirect('/admin');
 });
 
+app.get('/info/:filename', async (c) => {
+  const filename = c.req.param('filename');
+  const filePath = path.join(config.BOOKS_DIR, filename);
+  if (!fs.existsSync(filePath)) return c.notFound();
+
+  const bookInfo = await getBookInfo(filePath);
+  if (bookInfo) {
+    const html = await renderView('book_details', {
+      book: bookInfo,
+      filename: filename,
+      title: bookInfo.title || filename
+    });
+    return c.html(html);
+  }
+
+  return c.notFound();
+});
+
 app.get('/cover/:filename', async (c) => {
   const filePath = path.join(config.BOOKS_DIR, c.req.param('filename'));
   if (!fs.existsSync(filePath)) return c.notFound();
 
-  const cover = await getCover(filePath);
-  if (cover) {
-    c.header('Content-Type', cover.mimeType);
+  const bookInfo = await getBookInfo(filePath);
+  if (bookInfo) {
     c.header('Cache-Control', 'public, max-age=86400');
-    return c.body(cover.data as any);
+    return c.body(bookInfo.cover as any);
   }
 
   return c.notFound();

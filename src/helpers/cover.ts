@@ -2,93 +2,53 @@ import AdmZip from 'adm-zip';
 import path from 'path';
 import mime from 'mime-types';
 import fs from 'node:fs';
-import { XMLParser } from 'fast-xml-parser';
+import { unzipSync } from "fflate";
+import { DOMParser } from "linkedom";
+import { BookInfo } from '../types';
 
 const SUPPORTED_ARCHIVES = ['.epub', '.cbz', '.zip', '.fb2.zip'];
 const COVER_REGEX = /(^|\/)cover\.(jpe?g|png)$/i;
 const IMAGE_REGEX = /\.(jpe?g|png)$/i;
 
-export async function getEpubCover(filePath: string): Promise<{ data: Buffer; mimeType: string } | null> {
+export async function getEpubInfo(filePath: string): Promise<BookInfo | null> {
   try {
-    const buffer = await fs.promises.readFile(filePath);
-    const zip = new AdmZip(buffer);
-    const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: "" });
 
-    const containerEntry = zip.getEntry("META-INF/container.xml");
-    if (!containerEntry) throw new Error("EPUB format no valid (missing container.xml)");
+    const file = unzipSync(new Uint8Array(await Bun.file(filePath).arrayBuffer()));
+    const rootOPF = file["META-INF/container.xml"];
+    const documentOPF = new DOMParser().parseFromString(new TextDecoder().decode(rootOPF), "text/xml");
+    const contentOPF = documentOPF.querySelector("rootfile")?.getAttribute("full-path")!;
+    const route = contentOPF.split("/").slice(0, -1).join("/");
 
-    const containerData = parser.parse(containerEntry.getData().toString());
-    const opfPath = containerData.container?.rootfiles?.rootfile?.["full-path"];
+    const document = new DOMParser().parseFromString(new TextDecoder().decode(file[contentOPF]), "text/xml");
+    const coverID = document.querySelector("meta[name='cover']")?.getAttribute("content");
+    const converRoute = path.join(route, document.querySelector(`item[id='${coverID}']`)?.getAttribute("href")!).replace(/\\/g, "/");
+    const coverImage = file[converRoute];
 
-    if (!opfPath) throw new Error("Could not find rootfile on container.xml");
-
-    const opfEntry = zip.getEntry(opfPath);
-    if (!opfEntry) throw new Error(`Could not find OPF file on ${opfPath}`);
-
-    const opfContent = opfEntry.getData().toString();
-    const opfData = parser.parse(opfContent);
-
-    const manifest = opfData.package?.manifest?.item;
-    const metadata = opfData.package?.metadata?.meta;
-
-    if (!manifest) throw new Error("Could not find manifest");
-
-    let coverHref = "";
-    let coverMediaType = "";
-
-    const items = Array.isArray(manifest) ? manifest : [manifest];
-    const metas = Array.isArray(metadata) ? metadata : (metadata ? [metadata] : []);
-
-    const coverMeta = metas.find((m: any) => m?.name === "cover");
-    if (coverMeta) {
-      const coverID = coverMeta.content;
-      const item = items.find((i: any) => i.id === coverID);
-      if (item) {
-        coverHref = item.href;
-        coverMediaType = item["media-type"];
-      }
+    const bookInfo: BookInfo = {
+      title: document.querySelector("dc\\:title")?.textContent,
+      creator: document.querySelector("dc\\:creator")?.textContent,
+      identifier: document.querySelector("dc\\:identifier")?.textContent,
+      language: document.querySelector("dc\\:language")?.textContent,
+      publisher: document.querySelector("dc\\:publisher")?.textContent,
+      subject: document.querySelector("dc\\:subject")?.textContent,
+      description: document.querySelector("dc\\:description")?.textContent || document.querySelector("description")?.textContent,
+      date: document.querySelector("dc\\:date")?.textContent,
+      cover: coverImage
     }
 
-    if (!coverHref) {
-      const item = items.find((i: any) => i.properties === "cover-image");
-      if (item) {
-        coverHref = item.href;
-        coverMediaType = item["media-type"];
-      }
-    }
-
-    if (!coverHref) {
-      const item = items.find((i: any) => i.id?.toLowerCase().includes("cover"));
-      if (item) {
-        coverHref = item.href;
-        coverMediaType = item["media-type"];
-      }
-    }
-
-    if (!coverHref) throw new Error("Could not find cover");
-
-    const opfDir = path.dirname(opfPath);
-    const fullImagePath = path.join(opfDir, coverHref).replace(/\\/g, "/");
-
-    const imageEntry = zip.getEntry(fullImagePath);
-    if (!imageEntry) throw new Error(`Could not find image: ${fullImagePath}`);
-
-    return {
-      data: imageEntry.getData(),
-      mimeType: coverMediaType || "image/jpeg"
-    };
+    return bookInfo
   } catch (e) {
     return null;
   }
 }
 
-export const getCover = async (filePath: string): Promise<{ data: Buffer; mimeType: string } | null> => {
+export const getBookInfo = async (filePath: string): Promise<BookInfo | null> => {
   try {
     const ext = path.extname(filePath).toLowerCase();
 
     if (ext === '.epub') {
-      const epubCover = await getEpubCover(filePath);
-      if (epubCover) return epubCover;
+      const epubInfo = await getEpubInfo(filePath);
+      if (epubInfo) return epubInfo;
     }
 
     if (SUPPORTED_ARCHIVES.includes(ext)) {
@@ -117,8 +77,7 @@ export const getCover = async (filePath: string): Promise<{ data: Buffer; mimeTy
 
       if (entry) {
         return {
-          data: entry.getData(),
-          mimeType: mime.lookup(entry.entryName) || 'image/jpeg'
+          cover: entry.getData(),
         };
       }
     }

@@ -11,6 +11,7 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN bun run build:css
 
 # Production image, copy all the files and run next
 FROM base AS runner

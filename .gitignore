@@ -4,3 +4,4 @@ opds-server.exe
 books/
 node_modules
 github
+static/styles/app.css

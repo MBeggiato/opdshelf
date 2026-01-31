@@ -16,3 +16,16 @@ export interface TemplateData {
   currentTime: string;
   sortMode: SortMode;
 }
+
+export interface BookInfo {
+  [x: string]: any;
+  title?: string;
+  creator?: string;
+  identifier?: string;
+  language?: string;
+  publisher?: string;
+  subject?: string;
+  description?: string;
+  date?: string;
+  cover?: Buffer | Uint8Array;
+}
