@@ -72,7 +72,7 @@ export const getBooks = async (dir: string): Promise<Book[]> => {
           filename: path.relative(config.BOOKS_DIR, filePath).replace(/\\/g, '/'),
           size: stats.size,
           mimeType,
-          lastUpdated: stats.mtime,
+          lastUpdated: stats.mtime.toISOString(),
           simpleMime: getSimpleMime(mimeType)
         });
       } else if (stats.isDirectory()) {
@@ -93,9 +93,9 @@ export const sortBooks = (books: Book[], mode: SortMode): Book[] => {
     switch (mode) {
       case 'name-asc': return a.title.localeCompare(b.title);
       case 'name-desc': return b.title.localeCompare(a.title);
-      case 'date-asc': return a.lastUpdated.getTime() - b.lastUpdated.getTime();
+      case 'date-asc': return a.lastUpdated.localeCompare(b.lastUpdated);
       case 'date-desc':
-      default: return b.lastUpdated.getTime() - a.lastUpdated.getTime();
+      default: return b.lastUpdated.localeCompare(a.lastUpdated);
     }
   });
 };
